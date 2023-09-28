@@ -9,6 +9,7 @@ from type_checker.type_checker_decorator import check_type
 def method_test(name: str, age: int, sex) -> bool:
     return True
 
+
 class TestTypeChecker(unittest.TestCase):
 
     def test_is_type_match(self):
@@ -20,6 +21,7 @@ class TestTypeChecker(unittest.TestCase):
         self.assertEqual(method_test(name='vana', age=14, sex={}), True)
         self.assertEqual(method_test(name='vana', age=14, sex='woman'), True)
         self.assertEqual(method_test(name='vana', age=14, sex=(1, 'df')), True)
+        self.assertEqual(method_test(name=None, age=14, sex=(1, 'df')), True)
 
     def test_is_type_mismatch(self):
         try:
@@ -51,13 +53,14 @@ class TestTypeChecker(unittest.TestCase):
             method_test(name='Nick', age=[], sex='men')
         except Exception as ex:
             self.assertIsInstance(ex, TypingException)
-            
-            
+
     def test_typing_exception_message(self):
         try:
             method_test(name='Nick', age=[], sex='men')
         except TypingException as ex:
-            self.assertEqual(ex.message, "Arg 'age' expects int type, but actually is list type!")
+            self.assertEqual(
+                ex.message, "Arg 'age' expects int type, but actually is list type!")
+
 
 if __name__ == '__main__':
     unittest.main()

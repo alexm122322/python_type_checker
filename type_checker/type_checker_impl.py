@@ -82,5 +82,8 @@ class TypeChecker:
         Return: None
         """
 
-        if expected_type != actual_type and expected_type != _empty:
+        if expected_type == _empty:
+            return
+
+        if expected_type != actual_type:
             raise TypingException(arg_name, expected_type, actual_type)

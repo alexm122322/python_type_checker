@@ -6,30 +6,46 @@ from type_checker.typing_exception import TypingException
 
 
 class TypeChecker:
+    """Check type for all method arguments
+
+    Args:
+        args: Arguments of checking function.
+        kwargs: Dictionary arguments of checking function.
+
+    Attributes:
+        args (tuple): Arguments of checking function.
+        kwargs (dict): Dictionary arguments of checking function.
+
+    """
+
     def __init__(self, args: tuple, kwargs: dict) -> None:
         self.args = args
         self.kwargs = kwargs
 
     def check(self, func):
         """Entry point to TypeChecker
-        Raise TypingException if type mismatch.
 
-        Keyword arguments:
-        func -- checking function
-        Return: None
+        Args:
+            func (function): Checking function
+
+        Raises:
+            TypingException: if some type of method argument is mismatch.
+
         """
 
         sig = signature(func)
-        method_args = self.create_method_args(sig)
+        method_args = self._create_method_args(sig)
         self.check_method_args(method_args)
 
-    def create_method_args(self, func_sig: Signature) -> List[ArgData]:
-        """Create a list of method arguments 
-        wich contain name, value and expecting type.
+    def ceate_method_args(self, func_sig: Signature) -> List[ArgData]:
+        """Create a list of method arguments wich contain name, value and expecting type.
 
-        Keyword arguments:
-        func_sig -- signature of a checking method.
-        Return: list of ArgData
+        Args:
+            func_sig: Signature of a checking method.
+
+        Returns: 
+            Return a list of complex arguments of method.
+
         """
 
         result: List[ArgData] = []
@@ -57,11 +73,13 @@ class TypeChecker:
 
     def check_method_args(self, method_args: List[ArgData]):
         """Check all method arguments.
-        Raise TypingException if type mismatch.
 
-        Keyword arguments:
-        method_args -- list of method arguments.
-        Return: None
+        Args:
+            method_args: List of method arguments.
+
+        Raises:
+            TypingException: if some type of method argument is mismatch.
+
         """
 
         for arg in method_args:
@@ -73,13 +91,15 @@ class TypeChecker:
 
     def check_and_raise_typing_exception(self, arg_name: str, expected_type: type, actual_type: type):
         """Compare the expected type and the actual type of the method argument.
-        Raise TypingException if type mismatch.
 
-        Keyword arguments:
-        arg_name -- the name of the argument, used for TypingException;
-        expected_type -- the expected type;
-        actual_type -- the actual type.
-        Return: None
+        Args:
+            arg_name: The name of the argument, used for TypingException.
+            expected_type: The expected type.
+            actual_type: The actual type.
+
+        Raises:
+            TypingException: if some type of method argument is mismatch.
+            
         """
 
         if expected_type == _empty:

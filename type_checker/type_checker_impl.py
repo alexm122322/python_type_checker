@@ -18,7 +18,7 @@ class TypeChecker:
 
     """
 
-    def __init__(self, args: tuple, kwargs: dict) -> None:
+    def __init__(self, args: tuple, kwargs: dict):
         self.args = args
         self.kwargs = kwargs
 

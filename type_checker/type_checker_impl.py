@@ -1,8 +1,10 @@
 from inspect import Signature, _empty, signature
-from typing import List
+from typing import List, Tuple
 
-from type_checker.arg_data import ArgData
 from type_checker.typing_exception import TypingException
+
+
+__all__ = ['TypeChecker']
 
 
 class TypeChecker:
@@ -19,8 +21,8 @@ class TypeChecker:
     """
 
     def __init__(self, args: tuple, kwargs: dict):
-        self.args = args
-        self.kwargs = kwargs
+        self.__args = args
+        self.__kwargs = kwargs
 
     def check(self, func):
         """Entry point to TypeChecker
@@ -34,10 +36,10 @@ class TypeChecker:
         """
 
         sig = signature(func)
-        method_args = self._create_method_args(sig)
-        self.check_method_args(method_args)
+        method_args = self.__create_method_args(sig)
+        self.__check_method_args(method_args)
 
-    def ceate_method_args(self, func_sig: Signature) -> List[ArgData]:
+    def __create_method_args(self, func_sig: Signature) -> List[Tuple]:
         """Create a list of method arguments wich contain name, value and expecting type.
 
         Args:
@@ -48,30 +50,20 @@ class TypeChecker:
 
         """
 
-        result: List[ArgData] = []
-        for i, item in enumerate(func_sig.parameters.items()):
-            expected_type = item[1].annotation
-            arg_name = item[0]
+        method_args: List[Tuple] = []
+        sig_keys = list(func_sig.parameters.keys())
+        params = func_sig.parameters
 
-            if i < len(self.args):
-                result.append(ArgData(
-                    name=arg_name,
-                    value=self.args[i],
-                    expected_type=expected_type,
-                ))
-                continue
+        for i, value in enumerate(self.__args):
+            key = sig_keys[i]
+            method_args.append((key, value, params[key].annotation))
 
-            arg = self.kwargs.get(arg_name)
-            if arg is not None:
-                result.append(ArgData(
-                    name=arg_name,
-                    value=arg,
-                    expected_type=expected_type,
-                ))
+        for key, value in self.__kwargs.items():
+            method_args.append((key, value, params[key].annotation))
 
-        return result
+        return method_args
 
-    def check_method_args(self, method_args: List[ArgData]):
+    def __check_method_args(self, method_args: List[Tuple]):
         """Check all method arguments.
 
         Args:
@@ -83,14 +75,15 @@ class TypeChecker:
         """
 
         for arg in method_args:
-            self.check_and_raise_typing_exception(
-                arg_name=arg.name,
-                expected_type=arg.expected_type,
-                actual_type=type(arg.value),
-            )
+            self.__check_and_raise_typing_exception(arg_name=arg[0],
+                                                    expected_type=arg[2],
+                                                    actual_type=type(arg[1]))
 
-    def check_and_raise_typing_exception(self, arg_name: str, expected_type: type, actual_type: type):
-        """Compare the expected type and the actual type of the method argument.
+    def __check_and_raise_typing_exception(self, arg_name: str,
+                                           expected_type: type,
+                                           actual_type: type):
+        """Compare the expected type and the actual type of the method 
+        argument.
 
         Args:
             arg_name: The name of the argument, used for TypingException.
@@ -99,10 +92,10 @@ class TypeChecker:
 
         Raises:
             TypingException: if some type of method argument is mismatch.
-            
+
         """
 
-        if expected_type == _empty:
+        if expected_type == _empty or actual_type == type(None):
             return
 
         if expected_type != actual_type:

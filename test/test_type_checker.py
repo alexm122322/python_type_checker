@@ -2,7 +2,7 @@ import unittest
 
 # from test.example import method_test
 from type_checker.typing_exception import TypingException
-from type_checker.type_checker_decorator import check_type
+from type_checker import check_type
 
 
 @check_type

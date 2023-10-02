@@ -1,7 +1,9 @@
+from functools import wraps
 from type_checker.type_checker_impl import TypeChecker
 
 
 def check_type(func):
+    @wraps(func)
     def inner(*args, **kwargs):
         """Check if method arguments type matched.
         

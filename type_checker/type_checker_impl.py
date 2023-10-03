@@ -36,10 +36,10 @@ class TypeChecker:
         """
 
         sig = signature(func)
-        method_args = self.__create_method_args(sig)
-        self.__check_method_args(method_args)
+        method_args = self._create_method_args(sig)
+        self._check_method_args(method_args)
 
-    def __create_method_args(self, func_sig: Signature) -> List[Tuple]:
+    def _create_method_args(self, func_sig: Signature) -> List[Tuple]:
         """Create a list of method arguments wich contain name, value and expecting type.
 
         Args:
@@ -63,7 +63,7 @@ class TypeChecker:
 
         return method_args
 
-    def __check_method_args(self, method_args: List[Tuple]):
+    def _check_method_args(self, method_args: List[Tuple]):
         """Check all method arguments.
 
         Args:
@@ -75,11 +75,11 @@ class TypeChecker:
         """
 
         for arg in method_args:
-            self.__check_and_raise_typing_exception(arg_name=arg[0],
+            self._check_and_raise_typing_exception(arg_name=arg[0],
                                                     expected_type=arg[2],
                                                     actual_type=type(arg[1]))
 
-    def __check_and_raise_typing_exception(self, arg_name: str,
+    def _check_and_raise_typing_exception(self, arg_name: str,
                                            expected_type: type,
                                            actual_type: type):
         """Compare the expected type and the actual type of the method 

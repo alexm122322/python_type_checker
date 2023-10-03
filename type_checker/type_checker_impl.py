@@ -21,8 +21,8 @@ class TypeChecker:
     """
 
     def __init__(self, args: tuple, kwargs: dict):
-        self.__args = args
-        self.__kwargs = kwargs
+        self._args = args
+        self._kwargs = kwargs
 
     def check(self, func):
         """Entry point to TypeChecker
@@ -54,11 +54,11 @@ class TypeChecker:
         sig_keys = list(func_sig.parameters.keys())
         params = func_sig.parameters
 
-        for i, value in enumerate(self.__args):
+        for i, value in enumerate(self._args):
             key = sig_keys[i]
             method_args.append((key, value, params[key].annotation))
 
-        for key, value in self.__kwargs.items():
+        for key, value in self._kwargs.items():
             method_args.append((key, value, params[key].annotation))
 
         return method_args
